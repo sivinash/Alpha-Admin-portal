@@ -1,0 +1,1 @@
+The Admin Portal is a powerful management interface designed for an eCommerce website built using Flask, a lightweight web framework for Python, and MySQL, a robust relational database management system. This portal provides administrators with the tools necessary to efficiently manage the online store
