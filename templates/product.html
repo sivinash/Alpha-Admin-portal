@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href= "{{url_for('static',filename='dashboard.css')}}">
+  <body>
+    <div class="dashboard">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="profile-container" >
+              <img
+                src="{{admin.img}}"
+                alt="User  profile picture showing a professional headshot"
+              />
+              <button class="profile-button"><a href="{{ url_for('open_profile', admin=admin.username) }}">+</a></button>
+          </div>
+          <div style="width: 20%;">
+            <h3>{{admin.username}}</h3>
+          </div>
+        </div>
+        <div class="sidebar-menu">
+          <h4>Main</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('dashboard')}}"  id="navdashboard"
+                ><i class="fas fa-home"></i><span>Dashboard</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('product')}}" onclick="" class="active" id="navproduct" onclick="Product()"
+                ><i class="fas fa-box-open"></i><span>Procdut</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('add_product')}}" onclick="" class="" 
+                ><i class="fas fa-plus-circle"></i><span>Add Product</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('view_orders')}}"><i class="fas fa-shopping-cart"></i><span>View Orders</span></a>
+            </li>
+            <li>
+              <a href="{{url_for('view_order_history')}}"><i class="fas fa-history"></i><span>View histrory</span></a>
+            </li>
+          </ul>
+          <h4>Administration</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('addadmin')}}"
+                ><i class="fas fa-user-plus"></i></i><span> Add Admins</span></a
+              >
+            </li>
+            {% if(admin.id==1) %}
+            <li>
+              <a href="{{url_for('ManageAdmin')}}">
+                <i class="fas fa-user-cog"></i><span>Manage Admin</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+          <h4>Other</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('logout')}}"
+                ><i class="fas fa-sign-out-alt"></i><span>Logout</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="header">
+            <h1>Product List</h1>
+            <input type="text" placeholder="Search products..." value=''  oninput="filterProducts()" name="search" id="search"/>
+            <div class="user-profile">
+            <div class="profile-container" >
+              <img
+                src="{{admin.img}}"
+                alt="User  profile picture showing a professional headshot"
+              />
+              <button class="profile-button"><a href="{{ url_for('open_profile', admin=admin.username) }}">+</a></button>
+            </div>
+            <div style="width: 0%;">
+              <h4>{{admin.username}}</h4>
+              <h4>{{admin.email}}</h4>
+              <h4>{{admin.phone}}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="recent-orders" style="display: block;">
+          <h3 style="font-size: 24px;padding-left: 30px;">Products_list</h3>
+          <div id="product-list">
+          <table className="product-table">
+            <thead class="headccc">
+              <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Details</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in items %} {% if loop.index % 4 == 1 %}
+              <tr>
+                {% endif %}
+                <td class="product-row" data-name="{{ item.name }}" data-details="{{ item.details }}" price="{{item.price}}">
+                  <div class="product">
+                    <img src="{{ item.img }}" alt="{{ item.name }}" />
+                    <div class="namep" style="width: 100%;justify-content: space-between;display:flex;margin-bottom: 10px;font-size: 15px;"><h3>{{ item.name }}</h3><p>₹{{ item.price }}</p></div>
+                    <p  class="dp">{{ item.details }}</p>
+                    <div class="delp" style="width: 100%;justify-content:right;display:flex;"><button onclick="deleteitem(`{{ item.id }}`)" class="view-details2"><i class="fas fa-trash-alt" ></i></button></div>
+                  </div>
+                </td>
+                {% if loop.index % 4 == 0 or loop.last %}
+              </tr>
+              {% endif %} {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      
+        function deleteitem(id) {
+            console.log("Delete item with ID:", id);
+            fetch(`/delete_product/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Item deleted successfully");
+                    alert("item deleted",id);
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    console.error("Failed to delete item");
+                }
+            }).catch(error => {
+                console.error("Error deleting item:", error);
+            });
+        }
+        function editfunc(id) {
+          console.log(id)
+          console.log("Edit")
+          fetch(`/edit/${id}`,{ 
+              method:"GET",
+              headers: {
+                  'Accept': 'text/html', 
+                  'Content-Type': 'text/html'
+              }
+          })
+          .then(response => {
+
+            console.log("response")
+            console.log(response.redirected)
+            window.location.href = response.url;
+            console.log(response.text())
+            return response.text()
+          })
+          .catch(error=>console.error(error))
+        };
+        function filterProducts() {
+          console.log("filter......")
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            console.log(searchInput)
+            const productRows = document.querySelectorAll('.product-row');
+            productRows.forEach(row => {
+                const name = row.getAttribute('data-name').toLowerCase();
+                const details = row.getAttribute('data-details').toLowerCase();
+                const price=row.getAttribute('price');
+                if (name.includes(searchInput) || details.includes(searchInput) || price.includes(searchInput)) {
+                    row.style.display = ''; // Show the row
+                } else {
+                    row.style.display = 'none'; // Hide the row
+                }
+            });
+        }
+      
+    </script>
+  </body>
+</html>

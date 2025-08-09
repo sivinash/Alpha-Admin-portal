@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Item</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href= "{{url_for('static',filename='dashboard.css')}}">
+  </head>
+  <body>
+    <div class="dashboard">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="profile-container" >
+              <img
+                src="{{admin.img}}"
+                alt="User  profile picture showing a professional headshot"
+              />
+              <button class="profile-button"><a href="{{ url_for('open_profile', admin=admin.username) }}">+</a></button>
+          </div>
+          <div style="width: 20%;">
+            <h3>{{admin.username}}</h3>
+          </div>
+        </div>
+        <div class="sidebar-menu">
+          <h4>Main</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('dashboard')}}" class="" id="navdashboard"
+                ><i class="fas fa-home"></i><span>Dashboard</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('product')}}" onclick="" class="" id="navproduct" onclick="Product()"
+                ><i class="fas fa-box-open"></i><span>Procdut</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('add_product')}}" onclick="" class="active" 
+                ><i class="fas fa-plus-circle"></i><span>Add Product</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('view_orders')}}"><i class="fas fa-shopping-cart"></i><span>View Orders</span></a>
+            </li>
+            <li>
+              <a href="{{url_for('view_order_history')}}"><i class="fas fa-history"></i><span>View histrory</span></a>
+            </li>
+          </ul>
+          <h4>Administration</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('addadmin')}}"
+               class="" ><i class="fas fa-user-plus"></i></i><span> Add Admins</span></a
+              >
+            </li>
+            {% if(admin.id==1) %}
+            <li>
+              <a href="{{url_for('ManageAdmin')}}">
+                <i class="fas fa-user-cog"></i><span>Manage Admin</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+          <h4>Other</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('logout')}}"
+                ><i class="fas fa-sign-out-alt"></i><span>Logout</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+
+      <!-- Main Content -->
+      <div class="main-content" >
+        <div class="form-container">
+          <form action="add_item" method="post" enctype="multipart/form-data">
+              <h1>Add Item</h1>
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" required />
+              <label for="image">Image:</label>
+              <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)" />
+              <div class="image-preview" id="imagePreview">
+                <h3>Image Preview:</h3>
+                <img id="preview" src="" alt="Image Preview" />
+              </div>
+              <label for="description">Description:</label>
+              <textarea id="description" name="description" rows="4" cols="50" required></textarea>
+              <div style="width: 100%;justify-content: space-around;display: flex;font-size: 20px;">
+                <label for="type">Type :</label>
+                <div> <input type="radio" id="type" name="type" value="1"/>Electrical</div>
+                <div> <input type="radio" id="type" name="type" value="2"/>Eletronic</div>
+              </div>
+              <label for="price">Price:</label>
+              <input type="number" id="price" name="price" min="10" required />
+              <input type="submit" value="Submit" />
+            </form>
+            <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function previewImage(event) {
+            const imagePreview = document.getElementById('imagePreview');
+            const preview = document.getElementById('preview');
+            const file = event.target.files[0];
+            console.log(file)
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  preview.src = e.target.result;
+                  imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        }
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> New Admin Add Portal </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <style>
+        .login-container {
+            margin-left: 300px;
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header h2 {
+            color: #111827;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .login-header img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f9fafb
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+        .login-btn {
+            margin-left: 35%;
+            width: 30%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            background-color: var(--primary);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .login-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+        }
+        .alert-error {
+            background-color: #fee2e2;
+            color: var(--error);
+            border-left: 4px solid var(--error);
+        }
+        .alert-success {
+            background-color: #d1fae5;
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 2.25rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .password-toggle:hover {
+            color: #4b5563;
+        }
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="profile-container" >
+              <img
+                src="{{admin.img}}"
+                alt="User  profile picture showing a professional headshot"
+              />
+              <button class="profile-button"><a href="{{ url_for('open_profile', admin=admin.username) }}">+</a></button>
+          </div>
+          <div style="width: 20%;">
+            <h3>{{admin.username}}</h3>
+          </div>
+        </div>
+        <div class="sidebar-menu">
+          <h4>Main</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('dashboard')}}" class="" id="navdashboard"
+                ><i class="fas fa-home"></i><span>Dashboard</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('product')}}" onclick="" class="" id="navproduct" onclick="Product()"
+                ><i class="fas fa-box-open"></i><span>Procdut</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('add_product')}}" onclick="" class="" 
+                ><i class="fas fa-plus-circle"></i><span>Add Product</span></a
+              >
+            </li>
+            <li>
+              <a href="{{url_for('view_orders')}}"><i class="fas fa-shopping-cart"></i><span>View Orders</span></a>
+            </li>
+            <li>
+              <a href="{{url_for('view_order_history')}}"><i class="fas fa-history"></i><span>View histrory</span></a>
+            </li>
+          </ul>
+          <h4>Administration</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('addadmin')}}"
+               class="active" ><i class="fas fa-user-plus"></i></i><span> Add Admins</span></a
+              >
+            </li>
+            {% if(admin.id==1) %}
+            <li>
+              <a href="{{url_for('ManageAdmin')}}">
+                <i class="fas fa-user-cog"></i><span>Manage Admin</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+          <h4>Other</h4>
+          <ul>
+            <li>
+              <a href="{{url_for('logout')}}"
+                ><i class="fas fa-sign-out-alt"></i><span>Logout</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+        <div class="main-content">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Admin Portal</h2>
+                    <p>Register new admin</p>
+                </div>
+                <form id="loginForm" onsubmit="return validateForm1(event)">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter your username" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password1">Password</label>
+                        <input type="password" id="password1" name="password1" required placeholder="Enter your password" />
+                        <span id="password-toggle1" class="password-toggle" onclick="togglePassword(1)">Show</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="password2">Confirm Password</label>
+                        <input type="password" id="password2" name="password2" required placeholder="Confirm your password" />
+                        <span id="password-toggle2" class="password-toggle" onclick="togglePassword(2)">Show</span>
+                    </div>
+                    <button type="submit" class="login-btn">Register</button>
+                </form>
+                <!-- Flash messages will appear here -->
+                <div id="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateForm1(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const username = document.getElementById('username').value.trim();
+            const password1 = document.getElementById('password1').value.trim();
+            const password2 = document.getElementById('password2').value.trim();
+
+            if (password1 !== password2) {
+                showFlashMessage('Passwords do not match', 'error');
+                return false;
+            }
+            if (!username || !password1 || !password2) {
+                showFlashMessage('Please fill in all fields', 'error');
+                return false;
+            }
+
+            const registerData = {
+                "username": username,
+                "password": password1,
+            };
+
+            fetch("/add_admin", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registerData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        showFlashMessage(data.message, 'error');
+                    });
+                }
+                return response.json().then(data => {
+                    showFlashMessage(data.message, 'success');
+                    // Optionally, reset the form or redirect
+                    document.getElementById('loginForm').reset();
+                });
+            })
+            .catch(error => {
+                showFlashMessage('An error occurred. Please try again.', 'error');
+            });
+
+            return false; // Prevent form submission
+        }
+
+        function togglePassword(id) {
+            const passwordInput = document.getElementById(`password${id}`);
+            const toggleBtn = document.getElementById(`password-toggle${id}`);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = 'Show';
+            }
+        }
+
+        function showFlashMessage(message, type) {
+            const flashContainer = document.getElementById('flash-messages');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            flashContainer.appendChild(alertDiv);
+            // Remove message after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            background-color: whitesmoke;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+            height: 100vh; /* Full viewport height */
+        }
+        #profile {
+            margin: auto;
+            width: 50%;
+            padding: 20px;
+            height: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            border-radius: 35px;
+        }
+        .main-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 150px;
+            background-color: brown;
+            position: relative;
+        }
+        .main-image img {
+            width: 150px;
+            height: 150px;
+            border-radius: 150px;
+            background-color: pink;
+        }
+        .llable {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            top: 70%;
+            right: 2%;
+            border: none;
+            font-size: 50px;
+            background-color: transparent;
+            padding: 0px;  
+            justify-content: center; 
+        }
+        #formprofile {
+            display: flex;
+            justify-content: space-around;
+        }
+        #detailsprofile {
+            height: 150px;
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            font-size: 20px;
+        }
+        #detailsprofile .input1 {
+            background-color: transparent;
+            border-color: transparent;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            outline: none;
+            font-size: 20px;
+        }
+        #detailsprofile input:focus {
+            background-color: transparent;
+            border-left: none;
+            border-right: none;    
+            box-shadow: pink;
+        }
+        #detailsprofile{
+            background-color: transparent;
+            padding: 10px;
+        }
+        .fonmgroup{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .formgrouplable{
+            font-size: 20px;
+            width: 300px;
+        }
+        .formgroupinput{
+            width: 700px;
+            font-size: 18px;
+            background-color: transparent;
+            border-color: transparent;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            outline: none;
+        }
+        .fonmgroup span{
+            width: 700px;
+        }
+    </style>
+</head>
+<body>
+    <div id="profile">
+        <h1 style="padding-left: 50px;">Edit Profile</h1>
+        <form onsubmit="handleFormSubmit(event)" action="/edit_admin" method="post" enctype="multipart/form-data">
+            <div id="formprofile">
+                <div class="main-image" id="profile-img">
+                    <img id="image-photo" src="{{img}}" alt="User profile">
+                    <label class="llable" style="background-color: transparent ; align-items: center; align-content: center;">+</label>
+                    <input class="llable" type="file" name="image" style="opacity: 0;"  accept="image/*" onchange="previewImage(event)"/>
+                </div>
+                <div id="detailsprofile">
+                    <div class="fonmgroup">
+                        <label class="formgrouplable" for="id">ID</label>:<span>{{id}}</span>
+                        <input 
+                         class="formgroupinput" type="hidden" id="id" name="id" value='{{id}}' placeholder="ID" onchange="update()"/>
+                    </div>
+                    <div class="fonmgroup">
+                        <label class="formgrouplable" for="name">Name</label>:<span>{{admin}}</span>
+                        <input  class="formgroupinput" type="hidden" id="name" name="name" value="{{admin}}" placeholder="Admin" onchange="update()"/>
+                    </div>
+                    <div class="fonmgroup">
+                        <label class="formgrouplable" for="email">Email</label>:
+                        <input type="email" class="formgroupinput" id="email" name="email" value="{{email}}" placeholder="admin@gmail.com" onchange="update()"/>
+                    </div>
+                    <div class="fonmgroup">
+                        <label class="formgrouplable" for="phone">Phone</label>:
+                        <input type="tel" class="formgroupinput"  id="phone" name="phone" value="{{phone}}" placeholder="Enter your number" onchange="update()"/>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 30px; width: 80%; display: flex; justify-content: right;">
+                <button id="classsubmit" style="display: none;" type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch('/edit_admin', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                alert('Profile updated successfully!');
+                document.getElementById('classsubmit').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating profile');
+            });
+        }
+        function update() {
+            const upade = document.getElementById("classsubmit");      
+            upade.style.display = "block";
+        }
+        function previewImage(event) {
+            const preview = document.getElementById('image-photo');
+            const file = event.target.files[0];
+            const upade = document.getElementById("classsubmit");
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+                upade.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
