@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
         body {
             background-color: whitesmoke;
@@ -49,9 +53,18 @@
             padding: 0px;  
             justify-content: center; 
         }
-        #formprofile {
+        #formprofile
+        {
             display: flex;
             justify-content: space-around;
+            margin-bottom: 0px;
+        }
+        #topping {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Align items vertically */
+            padding: 0 20px; /* Add padding for spacing */
+            
         }
         #detailsprofile {
             height: 150px;
@@ -102,11 +115,27 @@
         .fonmgroup span{
             width: 700px;
         }
+        .hhhhh{
+            font-size: 25px; 
+            color: black;
+            padding-right: 45px;
+            padding-top: 0px;
+        }
+        .onprint{
+            background-color: transparent;
+            color: transparent;
+            border: none;
+        }
     </style>
 </head>
 <body>
     <div id="profile">
-        <h1 style="padding-left: 50px;">Edit Profile</h1>
+        <div id="topping">
+            <h1 id="reddd" style="padding-left: 35px;">Edit Profile</h1>
+            <div class="hhhhh">
+                <a id="onprintt1" href="{{url_for('dashboard')}}"><i class="fas fa-arrow-left"></i></a>
+            </div>
+        </div>
         <form onsubmit="handleFormSubmit(event)" action="/edit_admin" method="post" enctype="multipart/form-data">
             <div id="formprofile">
                 <div class="main-image" id="profile-img">
@@ -134,12 +163,31 @@
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 30px; width: 80%; display: flex; justify-content: right;">
-                <button id="classsubmit" style="display: none;" type="submit">Update</button>
+            <div style="margin-top: 10px;margin-bottom: 10px; width: 90%; display: flex; justify-content: right;">
+                <button id="classsubmit"  style="display: none;" type="submit">Update</button>
             </div>
         </form>
+        <div style="width: 92%;background-color:transparent;display: flex; justify-content: right;margin-top: 2px;"><button id="onprintt" onclick="printcall()" ><i class="fas fa-print"></i></button></div>
     </div>
     <script>
+        function printcall() {
+            var toppingHeading = document.getElementById("reddd");
+            var originalHeadingText = toppingHeading.innerHTML; 
+            var mute =document.getElementById('onprintt');
+            mute.classList.add("onprint");
+            console.log(mute);
+            var mute1 =document.getElementById('onprintt1');
+            mute1.classList.add("onprint");
+            console.log(mute1);
+            toppingHeading.innerHTML = "Admin Profile";
+            var printContents = document.getElementById("profile").innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            toppingHeading.innerHTML = originalHeadingText;
+            window.location.reload();
+        }
         function handleFormSubmit(event) {
             event.preventDefault();
             const formData = new FormData(event.target);

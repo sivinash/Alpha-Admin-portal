@@ -110,10 +110,10 @@ def admin():
     password = request.form.get('password')
     admin1= Admin.query.filter_by(username=username).first()
     if admin1 and check_password_hash(admin1.password, password):
-        flash('Admin account already!', 'warning')
+        flash('Admin account already!', 'error')
         session['Admin'] = username
         return redirect(url_for("dashboard"))
-    flash('invalid details', 'warning')
+    flash('invalid details', 'error')
     return render_template("login.html")
 @app.route("/guest", methods=['GET', 'POST'])
 def guest():
@@ -387,7 +387,7 @@ def open_profile(admin):
             img_url = url_for('static', filename=result) 
             print("Image URL:", img_url)
         else:
-            img_url = url_for('static', filename='default_image.png')  
+            img_url = url_for('static', filename='default_image.jpeg')  
         return render_template("open_profile.html", admin=admin, id=admins.id, email=admins.email, phone=admins.phone, img=img_url)
     else:
         return "Admin not found", 404
